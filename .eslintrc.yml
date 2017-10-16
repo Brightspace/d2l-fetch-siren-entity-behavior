@@ -1,0 +1,12 @@
+extends:
+  brightspace/polymer-config
+rules:
+  object-shorthand: [2, "never"]
+env:
+  browser: true
+plugins:
+  [html]
+globals:
+  Polymer: false
+  WCT: false
+  Promise: false

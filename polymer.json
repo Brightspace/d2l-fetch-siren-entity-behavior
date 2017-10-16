@@ -1,0 +1,8 @@
+{
+  "lint": {
+    "rules": ["polymer-2-hybrid"]
+  },
+  "sources": [
+    "d2l-fetch-siren-entity-behavior.html"
+  ]
+}

@@ -1,0 +1,52 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script src="https://s.brightspace.com/lib/siren-parser/6.0.0/siren-parser.js"></script>
+<script src="https://s.brightspace.com/lib/d2lfetch/1.5.3/d2lfetch.js"></script>
+<script>
+	'use strict';
+
+	/* @polymerBehavior fetchSirenEntityBehaviorImpl */
+	var fetchSirenEntityBehaviorImpl = {
+		_fetchEntity: function(url, getToken, userUrl) {
+			var tokenUrl = userUrl || url;
+			if (url && typeof getToken === 'function' && tokenUrl) {
+				return getToken(tokenUrl)
+					.then(function(token) {
+						if (typeof token === 'string') {
+							return this._makeRequest(token, url);
+						} else {
+							throw new Error('token expected to be a string');
+						}
+					}.bind(this));
+			}
+		},
+
+		_makeRequest: function(token, url) {
+			var request = new Request(url, {
+				headers: new Headers({
+					Accept: 'application/vnd.siren+json',
+					Authorization: 'Bearer ' + token
+				})
+			});
+
+			return window.d2lfetch
+				.fetch(request)
+				.then(function(response) {
+					if (response.ok) {
+						return response.json();
+					}
+					return Promise.reject(response.status);
+				})
+				.then(window.D2L.Hypermedia.Siren.Parse);
+		}
+	};
+
+	window.D2L = window.D2L || {};
+	/*
+	* Behavior for basic siren entity fetching which parses output on return.
+	* @polymerBehavior window.D2L.FetchSirenEntityBehavior
+	*/
+	window.D2L.FetchSirenEntityBehavior = [
+		fetchSirenEntityBehaviorImpl
+	];
+</script>
