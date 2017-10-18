@@ -1,19 +1,33 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <script src="https://s.brightspace.com/lib/siren-parser/6.0.0/siren-parser.js"></script>
-<script src="https://s.brightspace.com/lib/d2lfetch/1.5.3/d2lfetch.js"></script>
+<script src="https://s.brightspace.com/lib/d2lfetch/1.2.0/d2lfetch.js"></script>
 <script>
 	'use strict';
 
 	/* @polymerBehavior fetchSirenEntityBehaviorImpl */
 	var fetchSirenEntityBehaviorImpl = {
-		_fetchEntity: function(url, getToken, userUrl) {
+
+		_fetchEntity: function(url) {
+			var request = new Request(url, {
+				headers: new Headers({ Accept: 'application/vnd.siren+json' })
+			});
+			return this._makeRequest(request);
+		},
+
+		_fetchEntityWithToken: function(url, getToken, userUrl) {
 			var tokenUrl = userUrl || url;
 			if (url && typeof getToken === 'function' && tokenUrl) {
 				return getToken(tokenUrl)
 					.then(function(token) {
 						if (typeof token === 'string') {
-							return this._makeRequest(token, url);
+							var request = new Request(url, {
+								headers: new Headers({
+									Accept: 'application/vnd.siren+json',
+									Authorization: 'Bearer ' + token
+								})
+							});
+							return this._makeRequest(request);
 						} else {
 							throw new Error('token expected to be a string');
 						}
@@ -21,14 +35,7 @@
 			}
 		},
 
-		_makeRequest: function(token, url) {
-			var request = new Request(url, {
-				headers: new Headers({
-					Accept: 'application/vnd.siren+json',
-					Authorization: 'Bearer ' + token
-				})
-			});
-
+		_makeRequest: function(request) {
 			return window.d2lfetch
 				.fetch(request)
 				.then(function(response) {
