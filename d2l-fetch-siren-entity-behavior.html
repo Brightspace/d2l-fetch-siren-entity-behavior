@@ -9,7 +9,7 @@
 	var fetchSirenEntityBehaviorImpl = {
 
 		properties: {
-			_serverTime: String
+			_serverTimeUtc: Date
 		},
 
 		_fetchEntity: function(url) {
@@ -45,12 +45,16 @@
 				.fetch(request)
 				.then(function(response) {
 					if (response.ok) {
-						self._serverTime = response.headers.get('Date');
+						self._serverTimeUtc = self._convertDateToUTC(new Date(response.headers.get('Date')));
 						return response.json();
 					}
 					return Promise.reject(response.status);
 				})
 				.then(window.D2L.Hypermedia.Siren.Parse);
+		},
+
+		_convertDateToUTC: function(date) {
+			return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 		}
 	};
 

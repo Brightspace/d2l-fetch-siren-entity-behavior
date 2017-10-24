@@ -111,18 +111,18 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			badResponse,
 			cls = 'some-class',
 			name = 'some-name',
-			date = 'some-date',
+			dateString = '2017-10-24',
 			errorStatus = 500,
 			sirenEntityJson = '{ "class": ["' + cls + '"], "properties": { "name": "' + name + '"} }';
 
 		beforeEach(function() {
 			sandbox.stub(window.d2lfetch, 'fetch');
 			var headers = new Headers();
-			headers.append('Date', date);
+			headers.append('Date', dateString);
 			goodResponse = new Response(sirenEntityJson, {
 				status: 200,
 				headers: headers
-			});
+			}),
 			badResponse = new Response(null, { status: errorStatus});
 		});
 
@@ -139,19 +139,18 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
 
 			return component._makeRequest(new Request('some-url'))
-				.then(function() {
+				.then(function(entity) {
 					expect(entity.hasClass(cls)).to.be.true;
 					expect(entity.properties.name).to.equal(name);
-					expect(component._serverTime).to.equal(date);
 				});
 		});
 
 		it('should set _serverTime when the fetch response is ok', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
-
+			var date = component._convertDateToUTC(new Date(dateString));
 			return component._makeRequest(new Request('some-url'))
-				.then(function(entity) {
-					expect(component._serverTime).to.equal(date);
+				.then(function() {
+					expect(component._serverTimeUtc.toISOString()).to.equal(date.toISOString());
 				});
 		});
 
