@@ -8,6 +8,10 @@
 	/* @polymerBehavior fetchSirenEntityBehaviorImpl */
 	var fetchSirenEntityBehaviorImpl = {
 
+		properties: {
+			_serverTime: String
+		},
+
 		_fetchEntity: function(url) {
 			var request = new Request(url, {
 				headers: new Headers({ Accept: 'application/vnd.siren+json' })
@@ -36,10 +40,12 @@
 		},
 
 		_makeRequest: function(request) {
+			var self = this;
 			return window.d2lfetch
 				.fetch(request)
 				.then(function(response) {
 					if (response.ok) {
+						self._serverTime = response.headers.get('Date');
 						return response.json();
 					}
 					return Promise.reject(response.status);
