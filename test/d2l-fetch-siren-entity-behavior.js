@@ -111,12 +111,18 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			badResponse,
 			cls = 'some-class',
 			name = 'some-name',
+			date = 'some-date',
 			errorStatus = 500,
 			sirenEntityJson = '{ "class": ["' + cls + '"], "properties": { "name": "' + name + '"} }';
 
 		beforeEach(function() {
 			sandbox.stub(window.d2lfetch, 'fetch');
-			goodResponse = new Response(sirenEntityJson, { status: 200 });
+			var headers = new Headers();
+			headers.append('Date', date);
+			goodResponse = new Response(sirenEntityJson, {
+				status: 200,
+				headers: headers
+			});
 			badResponse = new Response(null, { status: errorStatus});
 		});
 
@@ -130,6 +136,15 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('should return a parsed siren entity when the fetch response is ok', function() {
+			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
+
+			return component._makeRequest(new Request('some-url'))
+				.then(function() {
+					expect(component._serverTime).to.equal(date);
+				});
+		});
+
+		it('should set _serverTime when the fetch response is ok', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
 
 			return component._makeRequest(new Request('some-url'))
