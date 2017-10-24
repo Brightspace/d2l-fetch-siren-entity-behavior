@@ -140,6 +140,8 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 			return component._makeRequest(new Request('some-url'))
 				.then(function() {
+					expect(entity.hasClass(cls)).to.be.true;
+					expect(entity.properties.name).to.equal(name);
 					expect(component._serverTime).to.equal(date);
 				});
 		});
@@ -149,8 +151,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 			return component._makeRequest(new Request('some-url'))
 				.then(function(entity) {
-					expect(entity.hasClass(cls)).to.be.true;
-					expect(entity.properties.name).to.equal(name);
+					expect(component._serverTime).to.equal(date);
 				});
 		});
 
