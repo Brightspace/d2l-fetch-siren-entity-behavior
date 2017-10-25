@@ -154,6 +154,17 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 				});
 		});
 
+		it('should set _timeSkew to 60 when the difference between now and server time is one minute', function() {
+			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
+			component._convertDateToUTC = sandbox.stub();
+			component._convertDateToUTC.onFirstCall().returns(new Date('2017-10-25T18:01:00+00:00'));
+			component._convertDateToUTC.onSecondCall().returns(new Date('2017-10-25T18:00:00+00:00'));
+			return component._makeRequest(new Request('some-url'))
+				.then(function() {
+					expect(component._timeSkew).to.equal(60);
+				});
+		});
+
 		it('should reject with the status if the fetch response is not ok', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(badResponse));
 
