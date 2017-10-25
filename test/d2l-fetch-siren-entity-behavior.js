@@ -145,12 +145,12 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 				});
 		});
 
-		it('should set _serverTime when the fetch response is ok', function() {
+		it('should set _timeSkew to the difference between now and server time when the fetch response is ok', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
-			var date = component._convertDateToUTC(new Date(dateString));
+			component._convertDateToUTC = sandbox.stub().returns(new Date());
 			return component._makeRequest(new Request('some-url'))
 				.then(function() {
-					expect(component._serverTimeUtc.toISOString()).to.equal(date.toISOString());
+					expect(component._timeSkew).to.equal(0);
 				});
 		});
 

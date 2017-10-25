@@ -9,7 +9,7 @@
 	var fetchSirenEntityBehaviorImpl = {
 
 		properties: {
-			_serverTimeUtc: Date
+			_timeSkew: Number
 		},
 
 		_fetchEntity: function(url) {
@@ -45,7 +45,8 @@
 				.fetch(request)
 				.then(function(response) {
 					if (response.ok) {
-						self._serverTimeUtc = self._convertDateToUTC(new Date(response.headers.get('Date')));
+						var serverTimeUtc = self._convertDateToUTC(new Date(response.headers.get('Date')));
+						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(self._convertDateToUTC(new Date()) / 1000);
 						return response.json();
 					}
 					return Promise.reject(response.status);
