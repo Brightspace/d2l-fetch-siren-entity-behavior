@@ -45,17 +45,13 @@
 				.fetch(request)
 				.then(function(response) {
 					if (response.ok) {
-						var serverTimeUtc = self._convertDateToUTC(new Date(response.headers.get('Date')));
-						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(self._convertDateToUTC(new Date()) / 1000);
+						var serverTimeUtc = new Date(response.headers.get('Date'));
+						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(new Date() / 1000);
 						return response.json();
 					}
 					return Promise.reject(response.status);
 				})
 				.then(window.D2L.Hypermedia.Siren.Parse);
-		},
-
-		_convertDateToUTC: function(date) {
-			return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 		}
 	};
 
