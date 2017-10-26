@@ -111,14 +111,14 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			badResponse,
 			cls = 'some-class',
 			name = 'some-name',
-			dateString = '2017-10-24',
+			dateHeader = 'Date: Tue, 24 Oct 2017 16:00:00 GMT',
 			errorStatus = 500,
 			sirenEntityJson = '{ "class": ["' + cls + '"], "properties": { "name": "' + name + '"} }';
 
 		beforeEach(function() {
 			sandbox.stub(window.d2lfetch, 'fetch');
 			var headers = new Headers();
-			headers.append('Date', dateString);
+			headers.append('Date', dateHeader);
 			goodResponse = new Response(sirenEntityJson, {
 				status: 200,
 				headers: headers
@@ -147,7 +147,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 		it('should set _timeSkew to the difference between now and server time when the fetch response is ok', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
-			component._convertDateToUTC = sandbox.stub().returns(new Date());
+			component._getCurrentTime = sandbox.stub().returns(new Date('2017-10-24T16:00:00.000Z'));
 			return component._makeRequest(new Request('some-url'))
 				.then(function() {
 					expect(component._timeSkew).to.equal(0);
@@ -156,20 +156,16 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 		it('should set _timeSkew to 60 when the client is ahead of the server by one minute', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
-			component._convertDateToUTC = sandbox.stub();
-			component._convertDateToUTC.onFirstCall().returns(new Date('2017-10-25T18:01:00+00:00'));
-			component._convertDateToUTC.onSecondCall().returns(new Date('2017-10-25T18:00:00+00:00'));
+			component._getCurrentTime = sandbox.stub().returns(new Date('2017-10-24T15:59:00.000Z'));
 			return component._makeRequest(new Request('some-url'))
 				.then(function() {
 					expect(component._timeSkew).to.equal(60);
 				});
 		});
 
-		it('should set _timeSkew to 60 when the server is ahead of the client by one minute', function() {
+		it('should set _timeSkew to -60 when the server is ahead of the client by one minute', function() {
 			window.d2lfetch.fetch.returns(Promise.resolve(goodResponse));
-			component._convertDateToUTC = sandbox.stub();
-			component._convertDateToUTC.onFirstCall().returns(new Date('2017-10-25T18:00:00+00:00'));
-			component._convertDateToUTC.onSecondCall().returns(new Date('2017-10-25T18:01:00+00:00'));
+			component._getCurrentTime = sandbox.stub().returns(new Date('2017-10-24T16:01:00.000Z'));
 			return component._makeRequest(new Request('some-url'))
 				.then(function() {
 					expect(component._timeSkew).to.equal(-60);

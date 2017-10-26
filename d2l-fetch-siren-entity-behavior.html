@@ -46,12 +46,17 @@
 				.then(function(response) {
 					if (response.ok) {
 						var serverTimeUtc = new Date(response.headers.get('Date'));
-						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(new Date() / 1000);
+						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(self._getCurrentTime() / 1000);
 						return response.json();
 					}
 					return Promise.reject(response.status);
 				})
 				.then(window.D2L.Hypermedia.Siren.Parse);
+		},
+
+		// this function is purely for mocking out while testing
+		_getCurrentTime: function() {
+			return new Date();
 		}
 	};
 
