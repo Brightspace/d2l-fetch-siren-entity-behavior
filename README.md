@@ -39,7 +39,7 @@ _getUser: function() {
 
 ## Properties
 
-### _timeSkew
+### _clientTimeSkew
 This property tracks the difference in time between the users local machine and that of the server, in milliseconds. This can be useful for clients to more accurately determine things like token expiry.
 
 ## Functions
