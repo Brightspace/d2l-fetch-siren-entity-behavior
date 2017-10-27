@@ -46,7 +46,7 @@
 				.then(function(response) {
 					if (response.ok) {
 						var serverTimeUtc = new Date(response.headers.get('Date'));
-						self._timeSkew = Math.round(serverTimeUtc / 1000) - Math.round(self._getCurrentTime() / 1000);
+						self._timeSkew = serverTimeUtc - self._getCurrentTime();
 						return response.json();
 					}
 					return Promise.reject(response.status);
