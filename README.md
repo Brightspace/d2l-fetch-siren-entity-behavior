@@ -37,6 +37,13 @@ _getUser: function() {
 },
 ```
 
+## Properties
+
+### _clientTimeSkew
+This property tracks the difference in time between the users local machine and that of the server, in milliseconds. The value is in relation to the time from the server, so positive values indicate that the client is that many milliseconds into the future (relative to the server) whereas negative values indicate the number of milliseconds the client is in the past. This can be useful for clients to more accurately determine things like token expiry.
+
+## Functions
+
 ### _fetchEntity
 This function does not provide authorization headers, relying on d2l middleware to apply any if applicable.
 This function is best used for requests that do not require auth or that are ok to be made in the context of the logged in user.
