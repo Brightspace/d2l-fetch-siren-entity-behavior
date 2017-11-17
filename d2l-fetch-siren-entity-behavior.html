@@ -37,6 +37,7 @@
 						}
 					}.bind(this));
 			}
+			return Promise.reject(new Error('Invalid inputs'));
 		},
 
 		_makeRequest: function(request) {
