@@ -36,9 +36,8 @@
 							throw new Error('token expected to be a string');
 						}
 					}.bind(this));
-			} else {
-				return Promise.reject(new Error('Invalid inputs'));
 			}
+			return Promise.reject(new Error('Invalid inputs'));
 		},
 
 		_makeRequest: function(request) {
