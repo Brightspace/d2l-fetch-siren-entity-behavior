@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "polymer install --variants",
     "test": "npm run test:lint:js && npm run test:lint:wc && npm run test:wct",
-    "test:lint:js": "eslint .html && eslint --ext .js,.html test/",
+    "test:lint:js": "eslint *.html && eslint --ext .js,.html test/",
     "test:lint:wc": "polymer lint --input d2l-fetch-siren-entity-behavior.html",
     "test:wct": "polymer test -p",
     "test:wct:local": "cross-env LAUNCHPAD_BROWSERS=chrome polymer test -p --skip-plugin sauce"
