@@ -3,11 +3,12 @@
   "description": "Brightspace Fetch Siren Entity Behavior",
   "private": true,
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "polymer install --variants",
     "test": "npm run test:lint:js && npm run test:lint:wc && npm run test:wct",
-    "test:lint:js": "eslint --ext .js,.html . && eslint --ext .js,.html test/",
+    "test:lint:js": "eslint *.html && eslint --ext .js,.html test/",
     "test:lint:wc": "polymer lint --input d2l-fetch-siren-entity-behavior.html",
-    "test:wct": "cross-env LAUNCHPAD_BROWSERS=chrome wct -p"
+    "test:wct": "cross-env LAUNCHPAD_BROWSERS=chrome polymer test",
+    "test:wct:local": "cross-env LAUNCHPAD_BROWSERS=chrome polymer test -p --skip-plugin sauce"
   },
   "homepage": "https://github.com/Brightspace/d2l-fetch-siren-entity-behavior",
   "repository": {
@@ -27,12 +28,11 @@
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "devDependencies": {
-    "bower": "^1.8.0",
-    "cross-env": "^4.0.0",
-    "eslint": "^3.19.0",
-    "eslint-config-brightspace": "^0.2.4",
-    "eslint-plugin-html": "^2.0.3",
-    "polymer-cli": "^1.1.0",
+    "cross-env": "^5.1.3",
+    "eslint": "^4.15.0",
+    "eslint-config-brightspace": "^0.4.0",
+    "eslint-plugin-html": "^4.0.1",
+    "polymer-cli": "^1.5.7",
     "web-component-tester": "^6.0.0"
   }
 }
