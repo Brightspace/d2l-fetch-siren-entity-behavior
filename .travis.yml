@@ -11,4 +11,4 @@ before_script:
 - npm run test:lint:js
 - npm run test:lint:wc
 script:
-- xvfb-run polymer test -p
+- npm run test:wct
