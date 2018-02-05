@@ -5,8 +5,13 @@
 <script>
 	'use strict';
 
-	/* @polymerBehavior fetchSirenEntityBehaviorImpl */
-	var fetchSirenEntityBehaviorImpl = {
+	window.D2L = window.D2L || {};
+
+	/*
+	* Behavior for basic siren entity fetching which parses output on return.
+	* @polymerBehavior
+	*/
+	window.D2L.FetchSirenEntityBehavior = {
 
 		properties: {
 			_clientTimeSkew: Number
@@ -59,14 +64,7 @@
 		_getCurrentTime: function() {
 			return new Date();
 		}
+
 	};
 
-	window.D2L = window.D2L || {};
-	/*
-	* Behavior for basic siren entity fetching which parses output on return.
-	* @polymerBehavior window.D2L.FetchSirenEntityBehavior
-	*/
-	window.D2L.FetchSirenEntityBehavior = [
-		fetchSirenEntityBehaviorImpl
-	];
 </script>
