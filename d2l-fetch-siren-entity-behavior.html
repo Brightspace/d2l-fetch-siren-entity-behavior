@@ -1,12 +1,17 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../d2l-fetch/d2l-fetch.html">
+<link rel="import" href="../siren-parser-import/siren-parser-global.html">
 
-<script src="https://s.brightspace.com/lib/siren-parser/6.0.0/siren-parser.js"></script>
-<script src="https://s.brightspace.com/lib/d2lfetch/1.2.0/d2lfetch.js"></script>
 <script>
 	'use strict';
 
-	/* @polymerBehavior fetchSirenEntityBehaviorImpl */
-	var fetchSirenEntityBehaviorImpl = {
+	window.D2L = window.D2L || {};
+
+	/*
+	* Behavior for basic siren entity fetching which parses output on return.
+	* @polymerBehavior
+	*/
+	window.D2L.FetchSirenEntityBehavior = {
 
 		properties: {
 			_clientTimeSkew: Number
@@ -59,14 +64,7 @@
 		_getCurrentTime: function() {
 			return new Date();
 		}
+
 	};
 
-	window.D2L = window.D2L || {};
-	/*
-	* Behavior for basic siren entity fetching which parses output on return.
-	* @polymerBehavior window.D2L.FetchSirenEntityBehavior
-	*/
-	window.D2L.FetchSirenEntityBehavior = [
-		fetchSirenEntityBehaviorImpl
-	];
 </script>

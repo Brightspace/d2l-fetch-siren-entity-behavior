@@ -1,14 +1,5 @@
 language: node_js
-node_js: stable
-sudo: false
-addons:
-  firefox: latest
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java8-set-default
-before_script:
+node_js: node
+script:
 - npm run test:lint:js
 - npm run test:lint:wc
-script:
-- xvfb-run wct

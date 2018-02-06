@@ -1,9 +1,8 @@
 {
   "name": "d2l-fetch-siren-entity-behavior",
   "description": "Brightspace Fetch Siren Entity Behavior",
-  "authors": [
-    "D2L Corporation"
-  ],
+  "private": true,
+  "main": "d2l-fetch-siren-entity-behavior.html",
   "license": "Apache-2.0",
   "keywords": [
     "d2l",
@@ -11,21 +10,35 @@
     "profile",
     "behavior"
   ],
-  "homepage": "https://github.com/Brightspace/d2l-fetch-siren-entity-behavior",
-  "main": "d2l-fetch-siren-entity-behavior.html",
-  "private": true,
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
     "test",
+    ".editorconfig",
+    ".eslintrc.json",
+    ".gitignore",
+    ".travis.yml",
     "package.json",
+    "polymer.json",
     "wct.conf.json"
   ],
   "dependencies": {
-    "polymer": "^1.7.0"
-  },
+     "d2l-fetch": "Brightspace/d2l-fetch#^1.7.0",
+     "polymer": "1 - 2",
+     "siren-parser-import": "Brightspace/siren-parser-import#^6.5.0"
+   },
   "devDependencies": {
     "web-component-tester": "^6.0.0"
+  },
+  "variants": {
+    "1.x": {
+      "dependencies": {
+        "polymer": "^1.9.1"
+      },
+      "resolutions": {
+        "webcomponentsjs": "^0.7"
+      }
+    }
+  },
+  "resolutions": {
+    "webcomponentsjs": "^v1.0.0"
   }
 }
