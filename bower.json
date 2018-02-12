@@ -23,7 +23,7 @@
   "dependencies": {
      "d2l-fetch": "Brightspace/d2l-fetch#^1.7.0",
      "polymer": "1 - 2",
-     "siren-parser-import": "Brightspace/siren-parser-import#^6.5.0"
+     "siren-parser-import": "Brightspace/siren-parser-import#^7.0.0"
    },
   "devDependencies": {
     "web-component-tester": "^6.0.0"
