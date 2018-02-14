@@ -7,7 +7,7 @@ A Polymer-based behaviour to make requests and get back a parsed siren entity. R
 `d2l-fetch-siren-entity-behavior` can be installed from Bower:
 
 ```shell
-bower install Brightspace/d2l-fetch-siren-entity-behavior#^1.0.0
+bower install Brightspace/d2l-fetch-siren-entity-behavior#^4.0.0
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ Add the behavior to your component:
 	Polymer({
 		is: 'some-component',
 		behaviors: [
-			window.D2L.FetchSirenEntityBehavior
+			D2L.PolymerBehaviors.FetchSirenEntityBehavior
 		]
 	});
 </script>
