@@ -7,7 +7,7 @@ A Polymer-based behaviour to make requests and get back a parsed siren entity. R
 `d2l-fetch-siren-entity-behavior` can be installed from Bower:
 
 ```shell
-bower install Brightspace/d2l-fetch-siren-entity-behavior#^4.0.0
+bower install Brightspace/d2l-fetch-siren-entity-behavior
 ```
 
 ## Usage
