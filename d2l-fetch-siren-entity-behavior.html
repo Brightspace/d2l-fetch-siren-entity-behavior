@@ -15,7 +15,15 @@
 	D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 
 		properties: {
-			_clientTimeSkew: Number
+			_clientTimeSkew: Number,
+			__whitelistedDomains: {
+				type: Array,
+				value: [
+					'api.proddev.d2l',
+					'api.dev.brightspace.com',
+					'api.brightspace.com'
+				]
+			}
 		},
 
 		_fetchEntity: function(url) {
@@ -26,6 +34,11 @@
 		},
 
 		_fetchEntityWithToken: function(url, getToken, userUrl) {
+
+			if (!url || !this._isWhitelisted(url)) {
+				return Promise.reject(new Error('Invalid request url; must be a valid whitelisted domain.'));
+			}
+
 			var tokenUrl = userUrl || url;
 			if (url && typeof getToken === 'function' && tokenUrl) {
 				return getToken(tokenUrl)
@@ -64,6 +77,42 @@
 		// this function is purely for mocking out while testing
 		_getCurrentTime: function() {
 			return new Date();
+		},
+
+		_addDomains: function(domains) {
+			if (domains && domains instanceof Array) {
+				this.__whitelistedDomains = this.__mergeAndDedupe(this.__whitelistedDomains, domains);
+			}
+		},
+
+		__mergeAndDedupe: function(array1, array2) {
+			var result = [];
+			var observed = {};
+			var all = array1.concat(array2);
+
+			all.forEach(function(item) {
+				if (!observed[item]) {
+					result.push(item);
+					observed[item] = true;
+				}
+			});
+
+			return result;
+		},
+
+		_isWhitelisted: function(url) {
+			// expression taken from URI spec parsing section: https://tools.ietf.org/html/rfc3986#appendix-B
+			var uriExpression = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+			var host = url.match(uriExpression)[4];
+			if (!host) {
+				return false;
+			}
+			return 0 <= this.__whitelistedDomains.findIndex(function(domain) {
+				if (domain === host) {
+					return true;
+				}
+				return host.endsWith('.' + domain);
+			});
 		}
 
 	};

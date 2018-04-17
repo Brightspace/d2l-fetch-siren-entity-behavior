@@ -2,6 +2,30 @@
 
 'use strict';
 
+var validUrls = [
+	'https://api.brightspace.com',
+	'https://api.dev.brightspace.com',
+	'https://api.proddev.d2l',
+	'https://www.api.brightspace.com',
+	'http://api.dev.brightspace.com',
+	'ftp://api.dev.brightspace.com',
+	'https://some-tenant-id.api.brightspace.com',
+	'https://some-tenant-id.activities.api.dev.brightspace.com',
+	'https://some-tenant-id.activities.api.dev.brightspace.com/activities/6606_2000_11/usages/123060/users/20218/feedback',
+	'https://some-tenant-id.grades.api.dev.brightspace.com/something?take=1'
+];
+
+var invalidUrls = [
+	'https://api.rightspace.com',
+	'https://api-brightspace.com',
+	'http://api.dev-brightspace.com',
+	'https://www.example.com',
+	'ftp://api.example.com',
+	'https://api.brightspace.com:44444',
+	'https://some-tenant-id.activities.api.dev.brightspace.com:44444',
+	'https://some-tenant-id.activities.api.dv.brightspace.com/activities/6606_2000_11/usages/123060/users/20218/feedback'
+];
+
 describe('d2l-fetch-siren-entity-behavior', function() {
 	var component,
 		sandbox,
@@ -66,28 +90,28 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('should make request when getToken and url are provided', function() {
-			return component._fetchEntityWithToken('url', getToken, null)
+			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should make request when getToken, url and userUrl are provided', function() {
-			return component._fetchEntityWithToken('url', getToken, 'userUrl')
+			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, 'userUrl')
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should make request when getToken is previous set and url is provided', function() {
-			return component._fetchEntityWithToken('url', getToken, null)
+			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should not make request when getToken rejects', function() {
-			return component._fetchEntityWithToken('url', getRejected, null)
+			return component._fetchEntityWithToken('http://url.api.brightspace.com', getRejected, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.false;
 				}, function() {
@@ -96,13 +120,46 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('should not make request when token is not a string', function() {
-			return component._fetchEntityWithToken('url', getNoken, null)
+			return component._fetchEntityWithToken('http://url.api.brightspace.com', getNoken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.false;
 				}, function() {
 					expect(component._makeRequest.called).to.be.false;
 				});
 		});
+
+		invalidUrls.forEach(function(url) {
+			it('should throw an error if the request is from a non-whitelisted domain', function() {
+				return component._fetchEntityWithToken(url, getToken, null)
+					.then((function() { expect.fail(); }), function(err) { expect(err instanceof Error).to.equal(true); });
+			});
+		});
+
+		validUrls.forEach(function(url) {
+			it('should make request if the request is whitelisted', function() {
+				return component._fetchEntityWithToken(url, getToken, null)
+					.then(function() {
+						expect(component._makeRequest.called).to.be.true;
+					});
+			});
+		});
+
+		it('should accept additional whitelisted domains through _addDomains', function() {
+			component._addDomains(['totally.invalid.domain', 'api.brightspace.com']);
+			return component._fetchEntityWithToken('http://some.totally.invalid.domain/url', getToken, null)
+				.then(function() {
+					expect(component._makeRequest.called).to.be.true;
+				});
+		});
+
+		it('_addDomains should dedupe duplicate entries', function() {
+			var baseDomainCount = component.__whitelistedDomains.length;
+			// add 2 of the same and 1 pre-existing domain, so total 1 net new domain
+			component._addDomains(['totally.invalid.domain', 'api.brightspace.com', 'totally.invalid.domain']);
+
+			expect(component.__whitelistedDomains.length).to.equal(baseDomainCount + 1);
+		});
+
 	});
 
 	describe('_makeRequest', function() {

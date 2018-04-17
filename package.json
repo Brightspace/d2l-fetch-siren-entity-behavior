@@ -7,7 +7,7 @@
     "test": "npm run test:lint:js && npm run test:lint:wc",
     "test:lint:js": "eslint *.html",
     "test:lint:wc": "polymer lint -i *.html",
-    "test:unit:local": "polymer test --skip-plugin sauce"
+    "test:unit:local": "cross-env LAUNCHPAD_BROWSERS=chrome polymer test --skip-plugin sauce"
   },
   "homepage": "https://github.com/Brightspace/d2l-fetch-siren-entity-behavior",
   "repository": {
