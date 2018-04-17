@@ -7,8 +7,6 @@ var validUrls = [
 	'https://api.dev.brightspace.com',
 	'https://api.proddev.d2l',
 	'https://www.api.brightspace.com',
-	'http://api.dev.brightspace.com',
-	'ftp://api.dev.brightspace.com',
 	'https://some-tenant-id.api.brightspace.com',
 	'https://some-tenant-id.activities.api.dev.brightspace.com',
 	'https://some-tenant-id.activities.api.dev.brightspace.com/activities/6606_2000_11/usages/123060/users/20218/feedback',
@@ -16,6 +14,11 @@ var validUrls = [
 ];
 
 var invalidUrls = [
+	'http://api.dev.brightspace.com',
+	'httpss://api.dev.brightspace.com',
+	'https//api.dev.brightspace.com',
+	'api.dev.brightspace.com',
+	'ftp://api.dev.brightspace.com',
 	'https://api.rightspace.com',
 	'https://api-brightspace.com',
 	'http://api.dev-brightspace.com',
@@ -90,28 +93,28 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('should make request when getToken and url are provided', function() {
-			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, null)
+			return component._fetchEntityWithToken('https://url.api.brightspace.com', getToken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should make request when getToken, url and userUrl are provided', function() {
-			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, 'userUrl')
+			return component._fetchEntityWithToken('https://url.api.brightspace.com', getToken, 'userUrl')
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should make request when getToken is previous set and url is provided', function() {
-			return component._fetchEntityWithToken('http://url.api.brightspace.com', getToken, null)
+			return component._fetchEntityWithToken('https://url.api.brightspace.com', getToken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
 		});
 
 		it('should not make request when getToken rejects', function() {
-			return component._fetchEntityWithToken('http://url.api.brightspace.com', getRejected, null)
+			return component._fetchEntityWithToken('https://url.api.brightspace.com', getRejected, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.false;
 				}, function() {
@@ -120,7 +123,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('should not make request when token is not a string', function() {
-			return component._fetchEntityWithToken('http://url.api.brightspace.com', getNoken, null)
+			return component._fetchEntityWithToken('https://url.api.brightspace.com', getNoken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.false;
 				}, function() {
@@ -146,7 +149,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 		it('should accept additional whitelisted domains through _addDomains', function() {
 			component._addDomains(['totally.invalid.domain', 'api.brightspace.com']);
-			return component._fetchEntityWithToken('http://some.totally.invalid.domain/url', getToken, null)
+			return component._fetchEntityWithToken('https://some.totally.invalid.domain/url', getToken, null)
 				.then(function() {
 					expect(component._makeRequest.called).to.be.true;
 				});
