@@ -102,7 +102,7 @@
 
 		_isWhitelisted: function(url) {
 			// expression taken from URI spec parsing section: https://tools.ietf.org/html/rfc3986#appendix-B
-			var uriExpression = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+			var uriExpression = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/; //eslint-disable-line no-useless-escape
 			var matches = url.match(uriExpression);
 			if (matches[2] !== 'https') {
 				return false;
