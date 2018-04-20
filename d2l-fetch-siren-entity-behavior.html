@@ -101,13 +101,17 @@
 		},
 
 		_isWhitelisted: function(url) {
-			// expression taken from URI spec parsing section: https://tools.ietf.org/html/rfc3986#appendix-B
+			/* expression taken from URI spec parsing section: https://tools.ietf.org/html/rfc3986#appendix-B
+			   useful groups:
+				 protocol  = $2
+				 host      = $4
+				 path      = $5
+				 query     = $6
+				 fragment  = $7
+			*/
 			var uriExpression = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/; //eslint-disable-line no-useless-escape
 			var match_protocol  = 2;
 			var match_host      = 4;
-			var match_path      = 5;
-			var match_query     = 7;
-			var match_fragment  = 9;
 
 			var matches = url.match(uriExpression);
 			if (matches[match_protocol] !== 'https') {
