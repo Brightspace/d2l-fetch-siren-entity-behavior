@@ -103,11 +103,17 @@
 		_isWhitelisted: function(url) {
 			// expression taken from URI spec parsing section: https://tools.ietf.org/html/rfc3986#appendix-B
 			var uriExpression = /^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/; //eslint-disable-line no-useless-escape
+			var match_protocol  = 2;
+			var match_host      = 4;
+			var match_path      = 5;
+			var match_query     = 7;
+			var match_fragment  = 9;
+
 			var matches = url.match(uriExpression);
-			if (matches[2] !== 'https') {
+			if (matches[match_protocol] !== 'https') {
 				return false;
 			}
-			var host = matches[4];
+			var host = matches[match_host];
 			if (!host) {
 				return false;
 			}
