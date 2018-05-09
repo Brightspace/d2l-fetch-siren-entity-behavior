@@ -21,15 +21,15 @@
 		registered: function() {
 			window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta = window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta
 				|| new Polymer.IronMeta(
-				{
-					key: 'whitelistedDomains',
-					value: [
-						'api.proddev.d2l',
-						'api.dev.brightspace.com',
-						'api.brightspace.com'
-					]
-				}
-			);
+					{
+						key: 'whitelistedDomains',
+						value: [
+							'api.proddev.d2l',
+							'api.dev.brightspace.com',
+							'api.brightspace.com'
+						]
+					}
+				);
 		},
 
 		_fetchEntity: function(url) {
