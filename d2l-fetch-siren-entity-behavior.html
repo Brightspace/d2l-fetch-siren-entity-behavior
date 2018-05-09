@@ -15,15 +15,21 @@
 	D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 
 		properties: {
-			_clientTimeSkew: Number,
-			__whitelistedDomains: {
-				type: Array,
-				value: [
-					'api.proddev.d2l',
-					'api.dev.brightspace.com',
-					'api.brightspace.com'
-				]
-			}
+			_clientTimeSkew: Number
+		},
+
+		registered: function() {
+			window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta = window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta
+				|| new Polymer.IronMeta(
+				{
+					key: 'whitelistedDomains',
+					value: [
+						'api.proddev.d2l',
+						'api.dev.brightspace.com',
+						'api.brightspace.com'
+					]
+				}
+			);
 		},
 
 		_fetchEntity: function(url) {
@@ -81,7 +87,10 @@
 
 		_addDomains: function(domains) {
 			if (domains && domains instanceof Array) {
-				this.__whitelistedDomains = this.__mergeAndDedupe(this.__whitelistedDomains, domains);
+				new Polymer.IronMeta({ key: 'whitelistedDomains'}).value = this.__mergeAndDedupe(
+					this._getWhitelist(),
+					domains
+				);
 			}
 		},
 
@@ -98,6 +107,10 @@
 			});
 
 			return result;
+		},
+
+		_getWhitelist: function() {
+			return window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta.byKey('whitelistedDomains');
 		},
 
 		_isWhitelisted: function(url) {
@@ -121,12 +134,13 @@
 			if (!host) {
 				return false;
 			}
-			return 0 <= this.__whitelistedDomains.findIndex(function(domain) {
-				if (domain === host) {
-					return true;
-				}
-				return host.endsWith('.' + domain);
-			});
+			return 0 <= this._getWhitelist()
+				.findIndex(function(domain) {
+					if (domain === host) {
+						return true;
+					}
+					return host.endsWith('.' + domain);
+				});
 		}
 
 	};
