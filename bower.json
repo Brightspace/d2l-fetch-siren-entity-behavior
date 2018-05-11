@@ -21,10 +21,11 @@
     "wct.conf.json"
   ],
   "dependencies": {
-     "d2l-fetch": "Brightspace/d2l-fetch#^1.7.0",
-     "polymer": "1 - 2",
-     "siren-parser-import": "Brightspace/siren-parser-import#^7.0.0"
-   },
+    "d2l-fetch": "Brightspace/d2l-fetch#^1.7.0",
+    "polymer": "1 - 2",
+    "siren-parser-import": "Brightspace/siren-parser-import#^7.0.0",
+    "iron-meta": "PolymerElements/iron-meta#^2.1.1"
+  },
   "devDependencies": {
     "web-component-tester": "^6.0.0"
   },
