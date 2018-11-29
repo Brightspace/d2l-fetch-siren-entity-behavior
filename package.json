@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "polymer install --variants",
-    "test": "npm run test:lint:js && npm run test:lint:wc",
+    "test": "npm run test:lint:js && npm run test:lint:wc && npm run test:unit:local",
     "test:lint:js": "eslint *.html",
     "test:lint:wc": "polymer lint -i *.html",
     "test:unit:local": "cross-env LAUNCHPAD_BROWSERS=chrome polymer test --skip-plugin sauce"
