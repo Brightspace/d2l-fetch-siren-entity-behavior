@@ -1,7 +1,7 @@
 import '../@polymer/polymer/polymer-legacy.js';
 import '../d2l-fetch/d2l-fetch.js';
 import { IronMeta } from '../@polymer/iron-meta/iron-meta.js';
-import '../siren-parser/siren-parser.js';
+import SirenParse from 'siren-parser';
 
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
@@ -75,7 +75,7 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 				}
 				return Promise.reject(response.status);
 			})
-			.then(window.D2L.Hypermedia.Siren.Parse);
+			.then(SirenParse);
 	},
 
 	// this function is purely for mocking out while testing
