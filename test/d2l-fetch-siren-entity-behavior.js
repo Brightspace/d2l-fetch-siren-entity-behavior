@@ -1,5 +1,6 @@
 /* global describe, it, expect, fixture, beforeEach, afterEach, sinon */
 
+import { IronMeta } from '../../@polymer/iron-meta/iron-meta.js';
 'use strict';
 
 var validUrls = [
@@ -41,7 +42,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 	});
 
 	afterEach(function() {
-		window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta = new Polymer.IronMeta(
+		window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta = new IronMeta(
 			{
 				key: 'whitelistedDomains',
 				value: [

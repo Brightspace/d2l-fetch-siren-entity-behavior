@@ -2,9 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-		<script src="../../web-component-tester/browser.js"></script>
-		<link rel="import" href="consumer-element.html">
+		<script src="../../@babel/polyfill/browser.js"></script>
+		<script src="../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+		<script src="../../wct-browser-legacy/browser.js"></script>
+		<script type="module" src="./consumer-element.js"></script>
 	</head>
 	<body>
 
@@ -14,6 +15,6 @@
 			</template>
 		</test-fixture>
 
-		<script src="d2l-fetch-siren-entity-behavior.js"></script>
+		<script type="module" src="./d2l-fetch-siren-entity-behavior.js"></script>
 	</body>
 </html>
