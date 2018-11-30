@@ -41,6 +41,16 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 	});
 
 	afterEach(function() {
+		window.D2L.PolymerBehaviors.FetchSirenEntityBehaviorMeta = new Polymer.IronMeta(
+			{
+				key: 'whitelistedDomains',
+				value: [
+					'api.proddev.d2l',
+					'api.dev.brightspace.com',
+					'api.brightspace.com'
+				]
+			}
+		);
 		sandbox.restore();
 	});
 
@@ -156,11 +166,11 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		it('_addDomains should dedupe duplicate entries', function() {
-			var baseDomainCount = component.__whitelistedDomains.length;
+			var baseDomainCount = component._getWhitelist().length;
 			// add 2 of the same and 1 pre-existing domain, so total 1 net new domain
 			component._addDomains(['totally.invalid.domain', 'api.brightspace.com', 'totally.invalid.domain']);
 
-			expect(component.__whitelistedDomains.length).to.equal(baseDomainCount + 1);
+			expect(component._getWhitelist().length).to.equal(baseDomainCount + 1);
 		});
 
 	});
