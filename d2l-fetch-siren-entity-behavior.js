@@ -1,6 +1,6 @@
-import '../@polymer/polymer/polymer-legacy.js';
-import '../d2l-fetch/d2l-fetch.js';
-import { IronMeta } from '../@polymer/iron-meta/iron-meta.js';
+import '@polymer/polymer/polymer-legacy.js';
+import 'd2l-fetch/d2l-fetch.js';
+import { IronMeta } from '@polymer/iron-meta/iron-meta.js';
 import SirenParse from 'siren-parser';
 
 window.D2L = window.D2L || {};
