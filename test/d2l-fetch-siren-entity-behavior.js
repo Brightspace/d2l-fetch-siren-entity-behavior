@@ -1,6 +1,7 @@
 /* global describe, it, expect, fixture, beforeEach, afterEach, sinon */
 
-import { IronMeta } from '../../@polymer/iron-meta/iron-meta.js';
+import {IronMeta}  from '@polymer/iron-meta/iron-meta.js';
+
 'use strict';
 
 var validUrls = [
