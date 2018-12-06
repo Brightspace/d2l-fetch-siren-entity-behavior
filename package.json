@@ -44,7 +44,7 @@
   },
   "main": "d2l-fetch-siren-entity-behavior.js",
   "dependencies": {
-    "d2l-fetch": "Brightspace/d2l-fetch.git#semver:^2.0.0",
+    "d2l-fetch": "Brightspace/d2l-fetch.git#semver:^2",
     "@polymer/iron-meta": "^3.0.0-pre.18",
     "@polymer/polymer": "^3.0.0",
     "siren-parser": "^8.0.0"
