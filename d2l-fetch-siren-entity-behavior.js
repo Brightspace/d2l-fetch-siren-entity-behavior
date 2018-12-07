@@ -25,7 +25,7 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 						'api.proddev.d2l',
 						'api.dev.brightspace.com',
 						'api.brightspace.com',
-						'us-east-1.discovery.bff.dev.brightspace.com'
+						'bff.dev.brightspace.com'
 					]
 				}
 			);
