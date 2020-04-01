@@ -31,42 +31,59 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 			);
 	},
 
-	_fetchEntity: function(url) {
+	_fetchEntity: function(sirenLinkOrUrl) {
+		var url = sirenLinkOrUrl && sirenLinkOrUrl.href || sirenLinkOrUrl;
 		var request = new Request(url, {
 			headers: new Headers({ Accept: 'application/vnd.siren+json' })
 		});
-		return this._makeRequest(request);
+		return this._makeRequest(request, this.__skipAuth(sirenLinkOrUrl));
 	},
 
-	_fetchEntityWithToken: function(url, getToken, userUrl) {
+	_fetchEntityWithToken: function(sirenLinkOrUrl, getToken, userUrl) {
+
+		var url = sirenLinkOrUrl && sirenLinkOrUrl.href || sirenLinkOrUrl;
 
 		if (!url || !this._isWhitelisted(url)) {
 			return Promise.reject(new Error('Invalid request url; must be a valid whitelisted domain.'));
 		}
 
 		var tokenUrl = userUrl || url;
-		if (url && typeof getToken === 'function' && tokenUrl) {
-			return getToken(tokenUrl)
-				.then(function(token) {
-					if (typeof token === 'string') {
-						var request = new Request(url, {
-							headers: new Headers({
-								Accept: 'application/vnd.siren+json',
-								Authorization: 'Bearer ' + token
-							})
-						});
-						return this._makeRequest(request);
-					} else {
-						throw new Error('token expected to be a string');
-					}
-				}.bind(this));
+		if (!tokenUrl || typeof getToken !== 'function') {
+			return Promise.reject(new Error('Invalid inputs'));
 		}
-		return Promise.reject(new Error('Invalid inputs'));
+
+		if (this.__skipAuth(sirenLinkOrUrl)) {
+			return this._makeRequest(new Request(url, {
+				headers: new Headers({
+					Accept: 'application/vnd.siren+json'
+				})
+			}), true);
+		}
+
+		return getToken(tokenUrl)
+			.then(function(token) {
+				if (typeof token !== 'string') {
+					throw new Error('token expected to be a string');
+				}
+
+				var request = new Request(url, {
+					headers: new Headers({
+						Accept: 'application/vnd.siren+json',
+						Authorization: 'Bearer ' + token
+					})
+				});
+				return this._makeRequest(request, false);
+			}.bind(this));
 	},
 
-	_makeRequest: function(request) {
+	_makeRequest: function(request, skipAuth) {
 		var self = this;
-		return window.d2lfetch
+
+		var fetch = skipAuth
+			? window.d2lfetch.removeTemp('auth')
+			: window.d2lfetch;
+
+		return fetch
 			.fetch(request)
 			.then(function(response) {
 				if (response.ok) {
@@ -91,6 +108,22 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 				domains
 			);
 		}
+	},
+
+	__skipAuth: function(sirenLinkOrUrl) {
+		if (!sirenLinkOrUrl) {
+			return false;
+		}
+
+		if (!Array.isArray(sirenLinkOrUrl.rel)) {
+			return false;
+		}
+
+		if (-1 === sirenLinkOrUrl.rel.indexOf('nofollow')) {
+			return false;
+		}
+
+		return true;
 	},
 
 	__mergeAndDedupe: function(array1, array2) {

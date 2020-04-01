@@ -72,10 +72,42 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			return component._fetchEntity(url)
 				.then(function() {
 					expect(component._makeRequest).to.be.called;
+					var call = component._makeRequest.getCall(0);
 
-					var requestArg = component._makeRequest.getCall(0).args[0];
+					var requestArg = call.args[0];
 					expect(requestArg.url.endsWith(url)).to.be.true;
 					expect(requestArg.headers.get('Accept')).to.equal('application/vnd.siren+json');
+					expect(call.args[1]).to.equal(false);
+				});
+		});
+
+		it('should call _makeRequest with an appropriate request object siren link', function() {
+			var url = { href: '/some-url' };
+
+			return component._fetchEntity(url)
+				.then(function() {
+					expect(component._makeRequest).to.be.called;
+					var call = component._makeRequest.getCall(0);
+
+					var requestArg = call.args[0];
+					expect(requestArg.url.endsWith(url.href)).to.be.true;
+					expect(requestArg.headers.get('Accept')).to.equal('application/vnd.siren+json');
+					expect(call.args[1]).to.equal(false);
+				});
+		});
+
+		it('should call _makeRequest with an appropriate request object and skipAuth siren link nofollow', function() {
+			var url = { href: '/some-url', rel: ['nofollow'] };
+
+			return component._fetchEntity(url)
+				.then(function() {
+					expect(component._makeRequest).to.be.called;
+					var call = component._makeRequest.getCall(0);
+
+					var requestArg = call.args[0];
+					expect(requestArg.url.endsWith(url.href)).to.be.true;
+					expect(requestArg.headers.get('Accept')).to.equal('application/vnd.siren+json');
+					expect(call.args[1]).to.equal(true);
 				});
 		});
 	});
