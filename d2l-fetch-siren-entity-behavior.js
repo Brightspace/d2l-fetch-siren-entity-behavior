@@ -6,6 +6,28 @@ import SirenParse from 'siren-parser';
 window.D2L = window.D2L || {};
 window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 
+/**
+ * @typedef {string | { href: string }} SirenLinkOrUrl
+ * @typedef {Pick<RequestInit, 'signal'>} FetchEntityRequestInit
+ *
+ * @typedef {object} FetchEntityWithTokenOpts
+ * @prop {SirenLinkOrUrl} link
+ * @prop {string} [userLink]
+ * @prop {() => Promise<string>} getToken
+ * @prop {FetchEntityRequestInit} [requestInit]
+ */
+
+/**
+ * @param {SirenLinkOrUrl} sirenLinkOrUrl
+ */
+const extractHref = (sirenLinkOrUrl) => {
+	const href = typeof sirenLinkOrUrl === 'object'
+		? sirenLinkOrUrl.href
+		: sirenLinkOrUrl;
+
+	return href;
+};
+
 /*
 * Behavior for basic siren entity fetching which parses output on return.
 * @polymerBehavior
@@ -31,46 +53,73 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 			);
 	},
 
-	_fetchEntity: function(sirenLinkOrUrl) {
-		var url = sirenLinkOrUrl && sirenLinkOrUrl.href || sirenLinkOrUrl;
+	/**
+	 * @param {SirenLinkOrUrl} sirenLinkOrUrl
+	 * @param {FetchEntityRequestInit} [requestInit]
+	 */
+	_fetchEntity: function(sirenLinkOrUrl, requestInit) {
+		var url = extractHref(sirenLinkOrUrl);
 		var request = new Request(url, {
-			headers: new Headers({ Accept: 'application/vnd.siren+json' })
+			headers: new Headers({
+				Accept: 'application/vnd.siren+json'
+			}),
+			signal: requestInit && requestInit.signal
 		});
 		return this._makeRequest(request, this.__skipAuth(sirenLinkOrUrl));
 	},
 
-	_fetchEntityWithToken: function(sirenLinkOrUrl, getToken, userUrl) {
+	/**
+	 * @param {FetchEntityWithTokenOpts | SirenLinkOrUrl} linkOrOpts
+	 * @param {FetchEntityWithTokenOpts['getToken']} [getToken]
+	 * @param {FetchEntityWithTokenOpts['userLink']} [userUrl]
+	 * @param {FetchEntityWithTokenOpts['requestInit']} [requestInit]
+	 */
+	_fetchEntityWithToken: function(linkOrOpts, getToken, userUrl, requestInit) {
 
-		var url = sirenLinkOrUrl && sirenLinkOrUrl.href || sirenLinkOrUrl;
+		var ctx = {
+			url: typeof linkOrOpts === 'object'
+				? linkOrOpts && extractHref(linkOrOpts.link || linkOrOpts.href)
+				: linkOrOpts,
+			getToken: linkOrOpts && typeof linkOrOpts.getToken !== 'undefined'
+				? linkOrOpts.getToken
+				: getToken,
+			userUrl: linkOrOpts && extractHref(linkOrOpts.userLink) || userUrl,
+			requestInit: linkOrOpts && linkOrOpts.requestInit || requestInit || {}
+		};
+		// If a Siren link was provided, preserve that for functions
+		// that eg. inspect rels
+		var sirenLinkOrUrl = linkOrOpts && linkOrOpts.link || linkOrOpts;
 
-		if (!url || !this._isWhitelisted(url)) {
+		if (!ctx.url || !this._isWhitelisted(ctx.url)) {
 			return Promise.reject(new Error('Invalid request url; must be a valid whitelisted domain.'));
 		}
 
-		var tokenUrl = userUrl || url;
-		if (!tokenUrl || typeof getToken !== 'function') {
+		var tokenUrl = ctx.userUrl || ctx.url;
+		if (!tokenUrl || typeof ctx.getToken !== 'function') {
 			return Promise.reject(new Error('Invalid inputs'));
 		}
 
 		if (this.__skipAuth(sirenLinkOrUrl)) {
-			return this._makeRequest(new Request(url, {
+			return this._makeRequest(new Request(ctx.url, {
 				headers: new Headers({
 					Accept: 'application/vnd.siren+json'
-				})
+				}),
+				signal: ctx.requestInit.signal
 			}), true);
 		}
 
-		return getToken(tokenUrl)
+		return ctx.getToken(tokenUrl)
 			.then(function(token) {
 				if (typeof token !== 'string') {
 					throw new Error('token expected to be a string');
 				}
 
-				var request = new Request(url, {
+				var request = new Request(ctx.url, {
 					headers: new Headers({
 						Accept: 'application/vnd.siren+json',
 						Authorization: 'Bearer ' + token
-					})
+					}),
+					signal: ctx.requestInit.signal
 				});
 				return this._makeRequest(request, false);
 			}.bind(this));

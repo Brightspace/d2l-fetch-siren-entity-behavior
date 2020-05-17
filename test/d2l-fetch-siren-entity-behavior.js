@@ -34,12 +34,11 @@ var invalidUrls = [
 describe('d2l-fetch-siren-entity-behavior', function() {
 	var component,
 		sandbox,
-		getToken;
+		getToken = () => Promise.resolve('iamatoken');
 
 	beforeEach(function() {
 		component = fixture('default-fixture');
 		sandbox = sinon.sandbox.create();
-		getToken = sandbox.stub().returns(Promise.resolve('iamatoken'));
 	});
 
 	afterEach(function() {
@@ -128,7 +127,11 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		[
 			{ parm1: 'url', parm2: null, parm3: null },
 			{ parm1: null, parm2: getToken, parm3: null },
-			{ parm1: null, parm2: null, parm3: 'url'}
+			{ parm1: null, parm2: null, parm3: 'url'},
+			{ parm1: { href: 'url' }, parm2: null, parm3: null },
+			{ parm1: { link: 'url' }, parm2: undefined, parm3: undefined },
+			{ parm1: { link: { href: 'url' } }, parm2: undefined, parm3: undefined },
+			{ parm1: { getToken }, parm2: undefined, parm3: undefined },
 		].forEach(function(testcase) {
 			it('should not make request if getToken or url is not provided', function() {
 				component._fetchEntityWithToken(testcase.parm1, testcase.parm2, testcase.parm3);
@@ -136,18 +139,32 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			});
 		});
 
-		it('should make request when getToken and url are provided', function() {
-			return component._fetchEntityWithToken('https://url.api.brightspace.com', getToken, null)
-				.then(function() {
-					expect(component._makeRequest.called).to.be.true;
-				});
+		[
+			{ parm1: 'https://url.api.brightspace.com', parm2: getToken },
+			{ parm1: { href: 'https://url.api.brightspace.com' }, parm2: getToken },
+			{ parm1: { link: 'https://url.api.brightspace.com', getToken } },
+			{ parm1: { link: { href: 'https://url.api.brightspace.com' }, getToken } },
+		].forEach(function(testcase) {
+			it('should make request when getToken and url are provided', function() {
+				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2)
+					.then(function() {
+						expect(component._makeRequest.called).to.be.true;
+					});
+			});
 		});
 
-		it('should make request when getToken, url and userUrl are provided', function() {
-			return component._fetchEntityWithToken('https://url.api.brightspace.com', getToken, 'userUrl')
-				.then(function() {
-					expect(component._makeRequest.called).to.be.true;
-				});
+		[
+			{ parm1: 'https://url.api.brightspace.com', parm2: getToken, param3: 'userUrl' },
+			{ parm1: { href: 'https://url.api.brightspace.com' }, parm2: getToken, param3: 'userUrl' },
+			{ parm1: { link: 'https://url.api.brightspace.com', getToken, userLink: 'userUrl' } },
+			{ parm1: { link: { href: 'https://url.api.brightspace.com' }, getToken, userLink: 'userUrl' } },
+		].forEach(function(testcase) {
+			it('should make request when getToken, url and userUrl are provided', function() {
+				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2, testcase.parm3)
+					.then(function() {
+						expect(component._makeRequest.called).to.be.true;
+					});
+			});
 		});
 
 		it('should make request when getToken is previous set and url is provided', function() {
