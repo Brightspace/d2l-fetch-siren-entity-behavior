@@ -39,7 +39,7 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 
 	// A default AbortSignal is created if none provided, and passed-in objects are
 	// copied (not reference-equal), so to check if the argument was propagated,
-	// check if a handle was added
+	// check if a handler was added
 	abortSignal.onabort = () => {};
 
 	beforeEach(function() {
