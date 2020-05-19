@@ -140,18 +140,18 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		[
-			{ parm1: 'url', parm2: null, parm3: null },
-			{ parm1: null, parm2: getToken, parm3: null },
-			{ parm1: null, parm2: null, parm3: 'url'},
-			{ parm1: { href: 'url' }, parm2: null, parm3: null },
-			{ parm1: { link: 'url' }, parm2: null, parm3: null },
-			{ parm1: { link: { href: 'url' } }, parm2: null, parm3: null },
-			{ parm1: { link: { }, getToken }, parm2: null, parm3: null },
-			{ parm1: { }, parm2: getToken, parm3: null },
-			{ parm1: { getToken }, parm2: null, parm3: null },
+			[ 'url' ],
+			[ null, getToken ],
+			[ null, null, 'url' ],
+			[ { href: 'url' } ],
+			[ { link: 'url' } ],
+			[ { link: { href: 'url' } } ],
+			[ { link: { }, getToken } ],
+			[ { }, getToken ],
+			[ { getToken } ],
 		].forEach(function(testcase) {
 			it('should not make request if getToken or url is not provided', function() {
-				component._fetchEntityWithToken(testcase.parm1, testcase.parm2, testcase.parm3);
+				component._fetchEntityWithToken(...testcase);
 				expect(component._makeRequest.called).to.be.false;
 			});
 		});
@@ -244,13 +244,13 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		[
-			{ parm1: 'https://url.api.brightspace.com', parm2: getToken },
-			{ parm1: { link: 'https://url.api.brightspace.com', getToken } },
-			{ parm1: { rel: ['some-rel'], href: 'https://url.api.brightspace.com' }, parm2: getToken },
-			{ parm1: { link: { rel: ['some-rel'], href: 'https://url.api.brightspace.com' }, getToken } },
+			[ 'https://url.api.brightspace.com', getToken ],
+			[ { link: 'https://url.api.brightspace.com', getToken } ],
+			[ { rel: ['some-rel'], href: 'https://url.api.brightspace.com' }, getToken ],
+			[ { link: { rel: ['some-rel'], href: 'https://url.api.brightspace.com' }, getToken } ],
 		].forEach(function(testcase) {
 			it('should add an Authorization header by default', function() {
-				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2)
+				return component._fetchEntityWithToken(...testcase)
 					.then(function() {
 						expect(component._makeRequest.getCall(0).args[0].headers.get('Authorization')).to.equal('Bearer iamatoken');
 						expect(component._makeRequest.getCall(0).args[1]).to.be.false;
@@ -259,11 +259,11 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		[
-			{ parm1: { rel: ['some-rel', 'nofollow'], href: 'https://url.api.brightspace.com' }, parm2: getToken },
-			{ parm1: { link: { rel: ['some-rel', 'nofollow'], href: 'https://url.api.brightspace.com' }, getToken } },
+			[ { rel: ['some-rel', 'nofollow'], href: 'https://url.api.brightspace.com' }, getToken ],
+			[ { link: { rel: ['some-rel', 'nofollow'], href: 'https://url.api.brightspace.com' }, getToken } ],
 		].forEach(function(testcase) {
 			it('should skip authorization when provided a Siren link with a nofollow rel', function() {
-				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2)
+				return component._fetchEntityWithToken(...testcase)
 					.then(function() {
 						expect(component._makeRequest.getCall(0).args[0].headers.get('Authorization')).to.be.null;
 						expect(component._makeRequest.getCall(0).args[1]).to.be.true;
