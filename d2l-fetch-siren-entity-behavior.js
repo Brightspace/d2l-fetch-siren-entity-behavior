@@ -86,8 +86,7 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 			userUrl: linkOrOpts && extractHref(linkOrOpts.userLink) || userUrl,
 			requestInit: linkOrOpts && linkOrOpts.requestInit || requestInit || {}
 		};
-		// If a Siren link was provided, preserve that for functions
-		// that eg. inspect rels
+		// Preserve original Siren link (if provided) for future rel inspection
 		var sirenLinkOrUrl = linkOrOpts && linkOrOpts.link || linkOrOpts;
 
 		if (!ctx.url || !this._isWhitelisted(ctx.url)) {
