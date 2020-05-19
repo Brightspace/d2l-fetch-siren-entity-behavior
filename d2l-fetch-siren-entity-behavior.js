@@ -20,7 +20,7 @@ window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 /**
  * @param {SirenLinkOrUrl} sirenLinkOrUrl
  */
-const extractHref = (sirenLinkOrUrl) => {
+const extractHref = function(sirenLinkOrUrl) {
 	const href = typeof sirenLinkOrUrl === 'object'
 		? sirenLinkOrUrl.href
 		: sirenLinkOrUrl;

@@ -34,13 +34,13 @@ var invalidUrls = [
 describe('d2l-fetch-siren-entity-behavior', function() {
 	var component,
 		sandbox,
-		getToken = () => Promise.resolve('iamatoken'),
+		getToken = function() { return Promise.resolve('iamatoken'); },
 		abortSignal = (new AbortController()).signal;
 
 	// A default AbortSignal is created if none provided, and passed-in objects are
 	// copied (not reference-equal), so to check if the argument was propagated,
 	// check if a handler was added
-	abortSignal.onabort = () => {};
+	abortSignal.onabort = function() {};
 
 	beforeEach(function() {
 		component = fixture('default-fixture');
