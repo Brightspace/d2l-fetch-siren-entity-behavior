@@ -78,7 +78,7 @@ D2L.PolymerBehaviors.FetchSirenEntityBehavior = {
 
 		var ctx = {
 			url: typeof linkOrOpts === 'object'
-				? linkOrOpts && extractHref(linkOrOpts.link || linkOrOpts.href)
+				? linkOrOpts && extractHref(linkOrOpts.link || linkOrOpts)
 				: linkOrOpts,
 			getToken: linkOrOpts && typeof linkOrOpts.getToken !== 'undefined'
 				? linkOrOpts.getToken

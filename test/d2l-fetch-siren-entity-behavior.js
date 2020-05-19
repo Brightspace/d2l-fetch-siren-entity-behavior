@@ -34,7 +34,13 @@ var invalidUrls = [
 describe('d2l-fetch-siren-entity-behavior', function() {
 	var component,
 		sandbox,
-		getToken = () => Promise.resolve('iamatoken');
+		getToken = () => Promise.resolve('iamatoken'),
+		abortSignal = (new AbortController()).signal;
+
+	// A default AbortSignal is created if none provided, and passed-in objects are
+	// copied (not reference-equal), so to check if the argument was propagated,
+	// check if a handle was added
+	abortSignal.onabort = () => {};
 
 	beforeEach(function() {
 		component = fixture('default-fixture');
@@ -65,19 +71,28 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 			component._makeRequest = sandbox.stub().returns(Promise.resolve());
 		});
 
-		it('should call _makeRequest with an appropriate request object', function() {
-			var url = '/some-url';
+		[
+			{ url: '/some-url' },
+			{ url: '/some-url', requestInit: { signal: abortSignal }}
+		].forEach(function(testcase) {
+			it('should call _makeRequest with an appropriate request object', function() {
+				return component._fetchEntity(testcase.url)
+					.then(function() {
+						expect(component._makeRequest).to.be.called;
+						var call = component._makeRequest.getCall(0);
 
-			return component._fetchEntity(url)
-				.then(function() {
-					expect(component._makeRequest).to.be.called;
-					var call = component._makeRequest.getCall(0);
+						var requestArg = call.args[0];
+						expect(requestArg.url.endsWith(testcase.url)).to.be.true;
+						expect(requestArg.headers.get('Accept')).to.equal('application/vnd.siren+json');
+						expect(call.args[1]).to.equal(false);
 
-					var requestArg = call.args[0];
-					expect(requestArg.url.endsWith(url)).to.be.true;
-					expect(requestArg.headers.get('Accept')).to.equal('application/vnd.siren+json');
-					expect(call.args[1]).to.equal(false);
-				});
+						if (typeof testcase.requestInit === 'object') {
+							expect(requestArg.signal.onabort).to.be.a.function;
+						} else {
+							expect(requestArg.signal.onabort).to.be.null;
+						}
+					});
+			});
 		});
 
 		it('should call _makeRequest with an appropriate request object siren link', function() {
@@ -142,13 +157,15 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		[
-			{ parm1: 'https://url.api.brightspace.com', parm2: getToken },
-			{ parm1: { href: 'https://url.api.brightspace.com' }, parm2: getToken },
-			{ parm1: { link: 'https://url.api.brightspace.com', getToken } },
-			{ parm1: { link: { href: 'https://url.api.brightspace.com' }, getToken } },
+			[ 'https://url.api.brightspace.com', getToken ],
+			[ { href: 'https://url.api.brightspace.com' }, getToken ],
+			[ { link: 'https://url.api.brightspace.com', getToken } ],
+			[ { link: { href: 'https://url.api.brightspace.com' }, getToken } ],
+			[ { link: 'https://url.api.brightspace.com', getToken, requestInit: { signal: abortSignal } } ],
+			[ 'https://url.api.brightspace.com', getToken, null, { signal: abortSignal } ],
 		].forEach(function(testcase) {
 			it('should make request when getToken and url are provided', function() {
-				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2)
+				return component._fetchEntityWithToken(...testcase)
 					.then(function() {
 						expect(component._makeRequest.called).to.be.true;
 					});
@@ -156,13 +173,13 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 		});
 
 		[
-			{ parm1: 'https://url.api.brightspace.com', parm2: getToken, param3: 'userUrl' },
-			{ parm1: { href: 'https://url.api.brightspace.com' }, parm2: getToken, param3: 'userUrl' },
-			{ parm1: { link: 'https://url.api.brightspace.com', getToken, userLink: 'userUrl' } },
-			{ parm1: { link: { href: 'https://url.api.brightspace.com' }, getToken, userLink: 'userUrl' } },
+			[ 'https://url.api.brightspace.com', getToken, 'userUrl' ],
+			[ { href: 'https://url.api.brightspace.com' }, getToken, 'userUrl' ],
+			[ { link: 'https://url.api.brightspace.com', getToken, userLink: 'userUrl' } ],
+			[ { link: { href: 'https://url.api.brightspace.com' }, getToken, userLink: 'userUrl' } ],
 		].forEach(function(testcase) {
 			it('should make request when getToken, url and userUrl are provided', function() {
-				return component._fetchEntityWithToken(testcase.parm1, testcase.parm2, testcase.parm3)
+				return component._fetchEntityWithToken(...testcase)
 					.then(function() {
 						expect(component._makeRequest.called).to.be.true;
 					});
@@ -250,6 +267,19 @@ describe('d2l-fetch-siren-entity-behavior', function() {
 					.then(function() {
 						expect(component._makeRequest.getCall(0).args[0].headers.get('Authorization')).to.be.null;
 						expect(component._makeRequest.getCall(0).args[1]).to.be.true;
+					});
+			});
+		});
+
+		[
+			[ 'https://url.api.brightspace.com', getToken, null, { signal: abortSignal } ],
+			[ { link: { rel: ['some-rel'], href: 'https://url.api.brightspace.com' }, getToken, requestInit: { signal: abortSignal } } ],
+			[ { link: { rel: ['some-rel', 'nofollow'], href: 'https://url.api.brightspace.com' }, getToken, requestInit: { signal: abortSignal } } ],
+		].forEach(function(testcase) {
+			it('should propagate an AbortSignal on the request if provided', function() {
+				return component._fetchEntityWithToken(...testcase)
+					.then(function() {
+						expect(component._makeRequest.getCall(0).args[0].signal.onabort).to.be.a.function;
 					});
 			});
 		});
