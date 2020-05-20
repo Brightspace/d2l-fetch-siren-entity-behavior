@@ -20,13 +20,13 @@ window.D2L.PolymerBehaviors = window.D2L.PolymerBehaviors || {};
 /**
  * @param {SirenLinkOrUrl} sirenLinkOrUrl
  */
-const extractHref = function(sirenLinkOrUrl) {
+function extractHref(sirenLinkOrUrl) {
 	const href = typeof sirenLinkOrUrl === 'object'
 		? sirenLinkOrUrl.href
 		: sirenLinkOrUrl;
 
 	return href;
-};
+}
 
 /*
 * Behavior for basic siren entity fetching which parses output on return.
