@@ -67,4 +67,4 @@ We recommend:
 
 * [fetch](https://github.com/github/fetch)
 * [promise-polyfill](https://github.com/PolymerLabs/promise-polyfill/)
-* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+* [abort-controller](https://github.com/mysticatea/abort-controller)
